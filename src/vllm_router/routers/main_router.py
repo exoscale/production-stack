@@ -16,10 +16,12 @@ import json
 from fastapi import (
     APIRouter,
     BackgroundTasks,
+    Depends,
     Request,
 )
 from fastapi.responses import JSONResponse, Response
 
+from vllm_router.auth import verify_api_key
 from vllm_router.dynamic_config import get_dynamic_config_watcher
 from vllm_router.log import init_logger
 from vllm_router.protocols import ModelCard, ModelList
@@ -43,7 +45,8 @@ try:
 except ImportError:
     semantic_cache_available = False
 
-main_router = APIRouter()
+main_router = APIRouter(dependencies=[Depends(verify_api_key)])
+public_router = APIRouter()
 
 logger = init_logger(__name__)
 
@@ -208,8 +211,7 @@ async def get_engine_instances():
 
     return JSONResponse(content=engines_cards)
 
-
-@main_router.get("/health")
+@public_router.get("/health")
 async def health() -> Response:
     """
     Endpoint to check the health status of various components.

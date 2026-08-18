@@ -30,7 +30,7 @@ from vllm_router.log import JsonFormatter, init_logger, set_log_format, set_log_
 from vllm_router.parsers.parser import parse_args
 from vllm_router.routers.batches_router import batches_router
 from vllm_router.routers.files_router import files_router
-from vllm_router.routers.main_router import main_router
+from vllm_router.routers.main_router import main_router, public_router
 from vllm_router.routers.metrics_router import metrics_router
 from vllm_router.routers.routing_logic import (
     cleanup_routing_logic,
@@ -367,6 +367,7 @@ def initialize_all(app: FastAPI, args):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(main_router)
+app.include_router(public_router)
 app.include_router(files_router)
 app.include_router(batches_router)
 app.include_router(metrics_router)
